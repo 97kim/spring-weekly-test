@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### src, build.gradle만 나오게 할 것임!
+gradle
+gradlew
+gradlew.bat
+settings.gradle
