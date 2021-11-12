@@ -52,15 +52,33 @@
         }
     </style>
     <script>
+        function readMemo() {
+            $.ajax({
+                type: 'GET',
+                url: '/memo',
+                data: {},
+                success: function (response) {
+                    $('#article').empty();
+                    for (let i = 0; i < response.length; i++) {
+                        let memoDto = response[i];
+                        let tempHtml = `<div>${response[i]['content']}</div>`;
+                        $('#article').append(tempHtml);
+                    }
+                }
+            })
+        }
+
+
         function memo() {
-            $('#content').val()
+            let content = $('#content').val();
             $.ajax({
                 type: 'POST',
                 url: '/memo',
                 contentType: "application/json",
-                data: JSON.stringify({content: content}),
+                data: JSON.stringify({'content': content}),
                 success: function (response) {
-                    alert(response['content']);
+                    alert('등록!');
+                    readMemo();
                 }
             })
         }
@@ -74,7 +92,7 @@
         <h1 class="display-4">Hello, weekly Test</h1>
         <p class="lead">이번주 문제는 매우 쉬워요!!</p>
         <hr class="my-4">
-        <p id="acticle"></p>
+        <p id="article"></p>
     </div>
     <div class="form-group">
         <label for="content">짧은 글 저장</label>
