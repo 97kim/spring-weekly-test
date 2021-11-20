@@ -44,7 +44,45 @@
         }
     </style>
     <script>
+        $(document).ready(function () {
+            $('#title').text(sessionStorage.getItem("title"));
+            $('#content').text(sessionStorage.getItem("content"));
+            readComment();
+            });
 
+        function setArticleComment() {
+            let comment = $('#comment').val();
+            let id = sessionStorage.getItem("id");
+            $.ajax({
+                type: "POST",
+                url: "/comment/save",
+                contentType: "application/json",
+                data: JSON.stringify(
+                    {
+                        comment: comment,
+                        articleId: id
+                    }),
+                success: function (response) {
+                    alert('등록!');
+                    readComment();
+                }
+            });
+        }
+
+        function readComment() {
+            $.ajax({
+                type: "GET",
+                url: `/comment/read?id=${sessionStorage.getItem("id")}`,
+                data: {},
+                success: function (response) {
+                    $('#comment-list').empty();
+                    for (let i = 0; i < response.length; i++) {
+                        let tempHtml = `<li>${response[i]['comment']}</li><hr/>`;
+                        $('#comment-list').prepend(tempHtml);
+                    }
+                }
+            });
+        }
     </script>
 
 </head>

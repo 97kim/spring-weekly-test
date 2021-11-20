@@ -50,6 +50,10 @@
         }
     </style>
     <script>
+        $(document).ready(function () {
+            readArticle();
+        });
+
         function openClose() {
             // id 값 post-box의 display 값이 block 이면(= 눈에 보이면)
             if ($("#post-box").css("display") == "block") {
@@ -68,10 +72,13 @@
         function viewDetail(i) {
             $.ajax({
                 type: "GET",
-                url: `/detail?id=${i}`,
+                url: `/comment?id=${i}`,
                 data: {},
                 success: function (response) {
-
+                    sessionStorage.setItem("title", response["title"]);
+                    sessionStorage.setItem("content", response["content"]);
+                    sessionStorage.setItem("id", i);
+                    location.href = "/detail";
                 }
             });
         }
@@ -84,9 +91,9 @@
                 success: function (response) {
                     $('#list-post').empty();
                     for (let i = 0; i < response.length; i++) {
-                        let tempHtml = `<tr><td>${response[i]['id']}</td>
-                                        <td><a href="javascript:viewDetail(${i})">${response[i]['title']}</a></td>
-                                        <td>0</td>
+                        let tempHtml = `<tr><td>${i+1}</td>
+                                        <td><a href="javascript:viewDetail(${response[i]['id']})">${response[i]['title']}</a></td>
+                                        <td>${response[i]["comments"].length}</td>
                                         <td>${response[i]['createdAt']}</td></tr>`
                         $('#list-post').prepend(tempHtml);
                     }

@@ -4,10 +4,7 @@ import com.example.spring_test02.domain.Article;
 import com.example.spring_test02.dto.ArticleDto;
 import com.example.spring_test02.service.ArticleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +23,10 @@ public class ArticleController {
     public Article addArticle(@RequestBody ArticleDto articleDto) {
         Article article = articleService.createArticle(articleDto);
         return article;
+    }
+
+    @GetMapping("/comment")
+    public Article readArticle(@RequestParam Long id) {
+        return articleService.findById(id);
     }
 }

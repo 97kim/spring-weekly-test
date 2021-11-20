@@ -9,15 +9,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Article {
+public class Article extends Timestamped {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
 
@@ -31,8 +31,8 @@ public class Article {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @OneToOne
-    private Comment comment;
+    @OneToMany(mappedBy = "article")
+    private List<Comment> comments;
 
     public Article(ArticleDto articleDto) {
         this.title = articleDto.getTitle();
