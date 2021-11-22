@@ -27,10 +27,6 @@ public class Article extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
-
     @OneToMany(mappedBy = "article")
     private List<Comment> comments;
 
