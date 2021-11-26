@@ -25,7 +25,7 @@
     <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 
-    <title>내배캠 | 질문합시다2</title>
+    <title>내배캠 | 타임어택</title>
 
     <!-- style -->
     <style type="text/css">
@@ -42,44 +42,54 @@
             width: 1200px;
             margin: auto;
         }
-
-        #post-box {
-            width: 500px;
-            margin: 20px auto;
-            padding: 50px;
-            border: black solid;
-            border-radius: 5px;
-        }
     </style>
     <script>
-        function readMemo() {
+        let idx = '';
+        $(document).ready(function () {
+            idx = getParam('idx');
+            getArticle(idx);
+        });
+
+        function getParam(name) {
+            var results = new RegExp('[\?&amp;]' + name + '=([^&amp;#]*)').exec(window.location.href);
+            return results[1] || 0;
+        }
+
+        function getArticle() {
             $.ajax({
-                type: 'GET',
-                url: '/memo',
-                data: {},
+                type: "GET",
+                url: `/article/${idx}`,
                 success: function (response) {
-                    $('#article').empty();
-                    for (let i = 0; i < response.length; i++) {
-                        let tempHtml = `<div>${response[i]['content']}</div>`;
-                        $('#article').append(tempHtml);
+                    $("#title").html(response['title']);
+                    $("#content").html(response['content']);
+                    $("#comment-list").empty();
+                    for (let i = 0; i < response['comments'].length; i++) {
+                        makeListComment(response['comments'][i])
                     }
                 }
             })
         }
 
-
-        function memo() {
-            let content = $('#content').val();
+        function setArticleComment() {
+            let comment = {
+                "idx":idx,
+                "comment":$("#comment").val()
+            }
             $.ajax({
-                type: 'POST',
-                url: '/memo',
-                contentType: "application/json",
-                data: JSON.stringify({content: content}),
+                type: "POST",
+                url: `/article/comment`,
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(comment),
                 success: function (response) {
-                    alert('등록!');
-                    readMemo();
+                    alert("댓글이 작성되었습니다!!");
+                    getArticle();
                 }
             })
+        }
+
+        function makeListComment(comment) {
+            let tempHtml = `<li class="list-group-item">${comment['comment']}</li>`;
+            $("#comment-list").append(tempHtml);
         }
     </script>
 
@@ -88,16 +98,24 @@
 <body>
 <div class="wrap">
     <div class="jumbotron">
-        <h1 class="display-4">Hello, weekly Test</h1>
-        <p class="lead">이번주 문제는 매우 쉬워요!!</p>
+        <h1 class="display-4">질문합시다!!</h1>
         <hr class="my-4">
-        <p id="article"></p>
     </div>
     <div class="form-group">
-        <label for="content">짧은 글 저장</label>
-        <textarea class="form-control" id="content" rows="3"></textarea>
+        <label for="title">제목</label>
+        <div id="title"></div>
     </div>
-    <button type="button" onclick="memo()" class="btn btn-primary">Primary</button>
+    <div class="form-group">
+        <label for="content">간단한 내용</label>
+        <div id="content"></div>
+    </div>
+    <hr/>
+    <textarea class="form-control" id="comment" rows="3"></textarea>
+    <button type="button" class="btn btn-primary" onclick="setArticleComment()">댓글작성</button>
+    <button type="button" class="btn btn-primary" onclick="location.href='/'">목록으로</button>
+    <hr/>
+    <ul class="list-group" id="comment-list">
+    </ul>
 </div>
 </body>
 
