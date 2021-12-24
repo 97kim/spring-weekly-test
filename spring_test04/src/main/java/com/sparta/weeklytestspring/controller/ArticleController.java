@@ -6,6 +6,8 @@ import com.sparta.weeklytestspring.dto.ArticleRequestDto;
 import com.sparta.weeklytestspring.security.UserDetailsImpl;
 import com.sparta.weeklytestspring.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +27,11 @@ public class ArticleController {
     }
 
     @GetMapping("/articles")
-    public List<Article> getArticles(@RequestParam(required = false) String searchTag){
-        return articleService.getArticles(searchTag);
+    public Page<Article> getArticles(@RequestParam(required = false) String searchTag,
+                                     @RequestParam Integer page,
+                                     @RequestParam Integer size){
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return articleService.getArticles(searchTag, pageRequest);
     }
 
     @GetMapping("/article/{id}")
